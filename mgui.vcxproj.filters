@@ -65,5 +65,8 @@
     <ClCompile Include="src\window.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\trackbar.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

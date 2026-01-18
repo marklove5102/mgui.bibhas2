@@ -1,4 +1,3 @@
-#define _WIN32_IE	0x0400
 #include <windows.h>
 #include <commctrl.h>
 #include <string>
@@ -127,6 +126,16 @@ void create(const char* label, int x, int y, int w, int h, CWindow* parent,
 	HMENU id);
 bool getCheck();
 void setCheck(bool bCheck);
+};
+
+class CTrackBar : public CWindow {
+public:
+	void create(const char* label, int x, int y, int w, int h, CWindow* parent,
+		HMENU id);
+	void setMax(int64_t max);
+	void setMin(int64_t min);
+	void setPos(int64_t pos);
+	int64_t getPos();
 };
 
 class CEdit : public CWindow {

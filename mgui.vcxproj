@@ -35,6 +35,7 @@
     <ClCompile Include="src\lv.cc" />
     <ClCompile Include="src\prop.cc" />
     <ClCompile Include="src\richedt.cc" />
+    <ClCompile Include="src\trackbar.cc" />
     <ClCompile Include="src\tv.cc" />
     <ClCompile Include="src\window.cc" />
   </ItemGroup>
