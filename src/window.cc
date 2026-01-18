@@ -250,9 +250,9 @@ void CFrame::create(const char* title, int width, int height, const char* menuId
 		}
 	}
 
-	CWindow::create(WS_EX_CLIENTEDGE, "MGUIWindow", title,
-			WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU,
-			CW_USEDEFAULT, CW_USEDEFAULT, width, height, NULL, hm);
+	CWindow::create(0, "MGUIWindow", title,
+		WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU,
+		CW_USEDEFAULT, CW_USEDEFAULT, width, height, NULL, hm);
 
 }
 
