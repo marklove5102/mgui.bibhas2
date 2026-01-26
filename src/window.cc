@@ -9,7 +9,6 @@
 #include <iostream>
 
 HINSTANCE g_instance;
-bool g_bContinue = true;
 
 void trace(const char* msg) {
 	/*
@@ -30,6 +29,8 @@ void trace(const char* msg) {
 	 */
 	cout << msg << endl;
 }
+
+HACCEL CWindow::accelerators = NULL;
 
 CWindow::CWindow() {
 	m_wnd = NULL;
@@ -171,17 +172,20 @@ void CWindow::onCommand(int id, int type, CWindow* source) {
 }
 
 void CWindow::loop() {
-	MSG s_currentMsg;
+	MSG msg;
 
-	while (g_bContinue) {
-		BOOL rc =:: GetMessage(&s_currentMsg, (HWND) NULL, 0, 0);
-		::TranslateMessage(&s_currentMsg);
-		::DispatchMessage(&s_currentMsg);
+	while (::GetMessage(&msg, (HWND)NULL, 0, 0)) {
+		if (accelerators != NULL && TranslateAccelerator(msg.hwnd, accelerators, &msg)) {
+			continue;
+		}
+
+		::TranslateMessage(&msg);
+		::DispatchMessage(&msg);
 	}
 }
 
 void CWindow::stop() {
-	g_bContinue = false;
+	::PostQuitMessage(0);
 }
 
 void CWindow::setTimer(int id, int interval) {
@@ -196,8 +200,13 @@ void CWindow::acceptFiles(bool val) {
 ::	DragAcceptFiles(m_wnd, val == true ? TRUE : FALSE);
 }
 
-void CWindow::init(HINSTANCE hInstance) {
+void CWindow::init(HINSTANCE hInstance, int acceleratorId) {
 	g_instance = hInstance;
+
+	if (acceleratorId != 0) {
+		accelerators = ::LoadAccelerators(g_instance,
+				MAKEINTRESOURCE(acceleratorId));
+	}
 
 	WNDCLASS wndclass;
 

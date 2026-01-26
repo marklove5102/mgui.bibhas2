@@ -10,6 +10,7 @@ extern HINSTANCE g_instance;
 extern void trace(const char* msg);
 
 class CWindow {
+	static HACCEL accelerators;
 public:
 void detach();
 void attach(HWND w);
@@ -33,7 +34,7 @@ void setFont(HFONT hF) {
 }
 static CWindow* fromWindow(HWND wnd);
 static CWindow* fromWindowSafe(HWND wnd);
-static void init(HINSTANCE hi);
+static void init(HINSTANCE hi, int acceleratorId = 0);
 static void loop();
 static void stop();
 
