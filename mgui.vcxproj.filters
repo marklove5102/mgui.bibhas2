@@ -29,9 +29,6 @@
     <ClCompile Include="src\canvas.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cdlg.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\combo.cc">
       <Filter>Source Files</Filter>
     </ClCompile>

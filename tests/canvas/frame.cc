@@ -1,6 +1,8 @@
 #include "../../include/mgui.h"
 #include "../../include/canvas.h"
 #include <iostream>
+#include <fstream>
+#include <filesystem>
 #include <vector>
 #include <commctrl.h>
 #include <math.h>
@@ -325,46 +327,58 @@ public:
 		erase(getSelected());
 	}
 
-	void openFile(const char* fileName) {
-		FILE *pF = ::fopen(fileName, "r");
-		if (pF == NULL) {
+	void openFile(const std::wstring& fileName) {
+		std::filesystem::path path(fileName);
+		std::ifstream is(path);
+
+		if (!is.is_open()) {
 			throw "Could not open file.";
 		}
 
-		int count, nextId, version;
-		char fmt[64];
+		std::string magic;
 
-		::fread(fmt, 1, sizeof(fmt), pF);
-		if (::strcmp(fmt, "MGUI") != 0) {
-			::fclose(pF);
+		is >> magic;
+
+		if (magic != "MGUI") {
 			throw "Invalid file format.";
 		}
-		::fread(&version, sizeof(version), 1, pF);
-		cout << "File version: " << version << endl;
+
+		int count, nextId, version;
+
+		is >> version;
+
 		if (version != 1) {
-			::fclose(pF);
 			throw "Wrong file version.";
 		}
-		::fread(&count, sizeof(count), 1, pF);
-		cout << "Item count: " << count << endl;
-		::fread(&nextId, sizeof(nextId), 1, pF);
+
+		is >> count;
+		is >> nextId;
+
 		setNextId(nextId);
 
-		::fread(dlgBox, 1, sizeof(DialogArea), pF);
+		is >> dlgBox->x >> dlgBox->y >>
+			dlgBox->w >> dlgBox->h;
+
 		clearList();
+
 		Control c; 
+		//Read controls
 		for (int i = 0; i < count; ++i) {
-			::fread(&c, 1, sizeof(Control), pF);
-			if (feof(pF) != 0) {
-				throw "Premature end of file.";
-			}
+			is >> c.type;
+			std::getline(is >> std::ws, c.text); //Consume newline
+			is >> c.id >>
+				c.x >> c.y >>
+				c.w >> c.h;
+			
 			Control *pC = cloneTemplate(&c);
+
 			addControl(pC);
+
 			if (pC->isSelected) {
 				select(pC);
 			}
 		}
-		::fclose(pF);
+
 		setDirty(false);
 	}
 
@@ -396,54 +410,42 @@ public:
 		return pC;
 	}
 
-	void saveFile(const char* fileName) {
-		FILE *pF = ::fopen(fileName, "w");
-		if (pF == NULL) {
+	void saveFile(const std::wstring& fileName) {
+		std::filesystem::path path(fileName);
+		std::ofstream os(path);
+
+		if (!os.is_open()) {
 			throw "Could not open file to save.";
 		}
 
-		int count = controlList.size();
+		size_t count = controlList.size();
 		int nextId = getNextId();
 		int version = 1;
-		char fmt[64];
 
-		strcpy(fmt, "MGUI");
-		::fwrite(fmt, 1, sizeof(fmt), pF);
-		::fwrite(&version, sizeof(version), 1, pF);
-		::fwrite(&count, sizeof(count), 1, pF);
-		::fwrite(&nextId, sizeof(int), 1, pF);
+		os << "MGUI" << std::endl;
+		os << version << std::endl;
+		os << count << std::endl;
+		os << nextId << std::endl;
+		os << dlgBox->x << " " << dlgBox->y << " " <<
+			dlgBox->w << " " << dlgBox->h << std::endl;
 
-		::fwrite(dlgBox, 1, sizeof(DialogArea), pF);
 		cout << xConv(dlgBox->x) <<
 			", " << yConv(dlgBox->y) <<
 			", " << xConv(dlgBox->w) <<
 			", " << yConv(dlgBox->h) << endl;
+
 		for (int i = 0; i < count; ++i) {
 			Control *c = controlList[i];
-			::fwrite(c, 1, sizeof(Control), pF);
-			cout << c->type << " \"" << c->text << 
-				"\", " << c->id <<
-				", " << xConv(c->x) <<
-				", " << yConv(c->y) <<
-				", " << xConv(c->w) <<
-				", " << yConv(c->h) << endl;
+
+			os << c->type << "\n" << c->text << "\n"
+				<< c->id <<
+				" " << xConv(c->x) <<
+				" " << yConv(c->y) <<
+				" " << xConv(c->w) <<
+				" " << yConv(c->h) << endl;
 
 		}
-		::fclose(pF);
 
-		string resfile(fileName);
-
-		resfile.append(".rc");
-		/*
-		pF = ::fopen(resfile.c_str(), "w");
-		if (pF == NULL) {
-			throw "Could not open file to save .rc file.";
-		}
-		for (int i = 0; i < count; ++i) {
-			Control *c = cv.controlList[i];
-			::fwrite(c, 1, sizeof(Control), pF);
-		}
-		*/
 		setDirty(false);
 	}
 };
@@ -662,10 +664,10 @@ public:
 			NULL
 		};
 		const char *typeId[] = {
-			"LTEXT",
-			"EDITTEXT",
+			"LABEL",
+			"EDIT",
 			"PUSHBUTTON",
-			"COMBOBOX",
+			"COMBO",
 			"LISTBOX",
 			NULL
 		};
@@ -714,18 +716,35 @@ void create() {
 void onClose() {
 	if (cv.isDirty()) {
 		if (questionBox("The design has changed.\nWould you like to save the file?")) {
-		save();
+			saveFile();
 		}
 	}
 	stop();
 }
 
-void save() {
-	CFileDialog fd("Save file", 
-		"All files|*.*",
-		this);
-	if (fd.saveFile()) {
-		cv.saveFile(fd.getFileName());
+void saveFile() {
+	std::vector<COMDLG_FILTERSPEC> filter = {
+		{L"Dialog files", L"*.dlg"},
+		{L"All files", L"*.*"}
+	};
+	std::wstring fileName;
+
+	if (saveFileName(L"Save file", filter, fileName)) {
+		cv.saveFile(fileName);
+	}
+}
+
+void openFile() {
+	std::vector<COMDLG_FILTERSPEC> filter = {
+		{L"Dialog files", L"*.dlg"},
+		{L"All files", L"*.*"}
+	};
+
+	std::wstring fileName;
+
+	if (openFileName(L"Open file", filter, fileName)) {
+		cv.openFile(fileName);
+		cv.redraw();
 	}
 }
 
@@ -734,15 +753,9 @@ try {
 	if (id == _EXIT) {
 		onClose();
 	} else if (id == _SAVE) {
-		save();
+		saveFile();
 	} else if (id == _OPEN) {
-		CFileDialog fd("Open file", 
-			"All files|*.*",
-			this);
-		if (fd.openFile()) {
-			cv.openFile(fd.getFileName());
-			cv.redraw();
-		}
+		openFile();
 	} else if (id == _PROPERTIES) {
 		Box *c = cv.getSelected();
 		if (c == NULL) {

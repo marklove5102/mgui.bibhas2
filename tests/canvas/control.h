@@ -124,7 +124,7 @@ public:
 	Control() {
 		id = "0";
 		text = "Label";
-		type = "LTEXT";
+		type = "LABEL";
 		x = y = w = h = 0;
 		isSelected = false;
 		intId = -1;

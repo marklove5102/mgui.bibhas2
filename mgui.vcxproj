@@ -25,7 +25,6 @@
   <ItemGroup>
     <ClCompile Include="src\btn.cc" />
     <ClCompile Include="src\canvas.cc" />
-    <ClCompile Include="src\cdlg.cc" />
     <ClCompile Include="src\combo.cc" />
     <ClCompile Include="src\dlg.cc" />
     <ClCompile Include="src\dtp.cc" />

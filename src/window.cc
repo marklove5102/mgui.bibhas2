@@ -7,6 +7,8 @@
  */
 #include <commctrl.h>
 #include <iostream>
+#include <shobjidl.h>
+#include <atlbase.h>
 
 HINSTANCE g_instance;
 
@@ -201,6 +203,12 @@ void CWindow::acceptFiles(bool val) {
 }
 
 void CWindow::init(HINSTANCE hInstance, int acceleratorId) {
+	HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+
+	if (!SUCCEEDED(hr)) {
+		throw "Failed to initialize COM.";
+	}
+
 	g_instance = hInstance;
 
 	if (acceleratorId != 0) {
@@ -239,6 +247,70 @@ void CWindow::init(HINSTANCE hInstance, int acceleratorId) {
 	if (::InitCommonControlsEx(&whatever) == FALSE) {
 		throw "Failed to load common controls.";
 	}
+}
+
+static void check_throw(HRESULT hr) {
+	if (!SUCCEEDED(hr)) {
+		throw hr;
+	}
+}
+
+static bool select_file(HWND hWnd, bool is_open, const wchar_t* title, const std::vector<COMDLG_FILTERSPEC>& filter, std::wstring& selected_name) {
+	CComPtr<IFileDialog> pFileSelector;
+
+	HRESULT hr = S_OK;
+
+	if (is_open) {
+		hr = CoCreateInstance(CLSID_FileOpenDialog,
+			NULL,
+			CLSCTX_INPROC_SERVER,
+			IID_PPV_ARGS(&pFileSelector));
+		check_throw(hr);
+	}
+	else {
+		hr = CoCreateInstance(CLSID_FileSaveDialog,
+			NULL,
+			CLSCTX_INPROC_SERVER,
+			IID_PPV_ARGS(&pFileSelector));
+		check_throw(hr);
+	}
+
+	hr = pFileSelector->SetFileTypes((UINT) filter.size(), filter.data());
+	check_throw(hr);
+
+	hr = pFileSelector->SetFileTypeIndex(0);
+	check_throw(hr);
+
+	hr = pFileSelector->Show(hWnd);
+
+	if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
+		return false; // User cancelled the dialog
+	}
+
+	check_throw(hr);
+
+	CComPtr<IShellItem> pItem;
+
+	hr = pFileSelector->GetResult(&pItem);
+	check_throw(hr);
+
+	PWSTR pszFilePath;
+	// Get the file system path from the Shell item
+	hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+	check_throw(hr);
+
+	selected_name = pszFilePath;
+
+	CoTaskMemFree(pszFilePath);
+
+	return true;
+}
+
+bool CWindow::openFileName(const wchar_t* title, const std::vector<COMDLG_FILTERSPEC>& filter, std::wstring& file_name) {
+	return select_file(m_wnd, true, title, filter, file_name);
+}
+bool CWindow::saveFileName(const wchar_t* title, const std::vector<COMDLG_FILTERSPEC>& filter, std::wstring& file_name) {
+	return select_file(m_wnd, false, title, filter, file_name);
 }
 
 void CFrame::create(const char* title, int width, int height) {

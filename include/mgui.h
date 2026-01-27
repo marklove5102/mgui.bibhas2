@@ -1,6 +1,9 @@
 #include <windows.h>
 #include <commctrl.h>
+#include <shtypes.h>
 #include <string>
+#include <vector>
+
 using namespace std;
 
 extern HINSTANCE g_instance;
@@ -37,6 +40,9 @@ static CWindow* fromWindowSafe(HWND wnd);
 static void init(HINSTANCE hi, int acceleratorId = 0);
 static void loop();
 static void stop();
+
+bool openFileName(const wchar_t* title, const std::vector<COMDLG_FILTERSPEC>& filter, std::wstring& file_name);
+bool saveFileName(const wchar_t* title, const std::vector<COMDLG_FILTERSPEC>& filter, std::wstring& file_name);
 
 void messageBox(const char* msg) {
 	::MessageBox(m_wnd, msg, "Message", MB_OK);
@@ -273,26 +279,6 @@ void setShowGrid(bool bTrue = true);
 
 class CGroupBox : public CWindow {
 void create(const char* label, int x, int y, int w, int h, CWindow* parent);
-};
-
-class CFileDialog {
-private:
-OPENFILENAME of;
-char fileName[1024];
-char filterBuff[256];
-
-public:
-	/*
-	 * Filter string convention:
-	 * "Text file|*.txt;*log|Image files|*.gif;*.jpg"
-	 * This convention is not from MS. MS expects the
-	 * seperator to be '\0' instead of |.
-	 */
-
-CFileDialog(const char* title, const char* filter, CWindow* parent=NULL);
-bool openFile();
-bool saveFile();
-const char* getFileName();
 };
 
 class CDialog : public CWindow {
