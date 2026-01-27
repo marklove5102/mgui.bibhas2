@@ -275,6 +275,9 @@ static bool select_file(HWND hWnd, bool is_open, const wchar_t* title, const std
 		check_throw(hr);
 	}
 
+	hr = pFileSelector->SetTitle(title);
+	check_throw(hr);
+
 	hr = pFileSelector->SetFileTypes((UINT) filter.size(), filter.data());
 	check_throw(hr);
 
