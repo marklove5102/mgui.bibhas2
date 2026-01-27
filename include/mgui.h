@@ -137,7 +137,7 @@ void setCheck(bool bCheck);
 
 class CTrackBar : public CWindow {
 public:
-	void create(const char* label, int x, int y, int w, int h, CWindow* parent,
+	void create(int x, int y, int w, int h, CWindow* parent,
 		HMENU id);
 	void setMax(int64_t max);
 	void setMin(int64_t min);

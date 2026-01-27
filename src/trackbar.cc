@@ -1,8 +1,8 @@
 #include "../include/mgui.h"
 
 void
-CTrackBar::create(const char* label, int x, int y, int w, int h, CWindow* parent, HMENU id) {
-	CWindow::create(0, TRACKBAR_CLASS, label,
+CTrackBar::create(int x, int y, int w, int h, CWindow* parent, HMENU id) {
+	CWindow::create(0, TRACKBAR_CLASS, "",
 		WS_CHILD |
 		WS_VISIBLE |
 		TBS_AUTOTICKS,
