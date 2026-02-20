@@ -116,15 +116,15 @@ public:
 
 class Control : public Box {
 public:
-	std::string id;
-	std::string type;
+	std::wstring id;
+	std::wstring type;
 	int intId;
-	std::string text;
+	std::wstring text;
 
 	Control() {
-		id = "0";
-		text = "Label";
-		type = "LABEL";
+		id = L"0";
+		text = L"Label";
+		type = L"LABEL";
 		x = y = w = h = 0;
 		isSelected = false;
 		intId = -1;
@@ -159,8 +159,8 @@ public:
 		x = y = 10;
 		w = 75;
 		h = 15;
-		text = "Label";
-		type = "LABEL";
+		text = L"Label";
+		type = L"LABEL";
 	}
 	void draw(HDC hdc) {
 		HFONT font = (HFONT) ::SelectObject(hdc, 
@@ -178,8 +178,8 @@ public:
 		x = y = 10;
 		w = 75;
 		h = 25;
-		text = "Button";
-		type = "BUTTON";
+		text = L"Button";
+		type = L"BUTTON";
 	}
 	void draw(HDC hdc) {
 		HFONT font = (HFONT) ::SelectObject(hdc, 
@@ -204,7 +204,7 @@ public:
 		x = y = 10;
 		w = 115;
 		h = 25;
-		type = "EDIT";
+		type = L"EDIT";
 	}
 	void draw(HDC hdc) {
 		DrawUtil::drawWhiteBox(hdc, x, y, w, h);
@@ -217,7 +217,7 @@ public:
 		x = y = 10;
 		w = 115;
 		h = 75;
-		type = "EDIT_MULTI";
+		type = L"EDIT_MULTI";
 	}
 	void draw(HDC hdc) {
 		DrawUtil::drawWhiteBox(hdc, x, y, w, h);
@@ -231,7 +231,7 @@ public:
 		x = y = 10;
 		w = 115;
 		h = 75;
-		type = "LISTBOX";
+		type = L"LISTBOX";
 	}
 	void draw(HDC hdc) {
 		DrawUtil::drawWhiteBox(hdc, x, y, w, h);
@@ -245,7 +245,7 @@ public:
 		x = y = 10;
 		w = 115;
 		h = 45;
-		type = "COMBO";
+		type = L"COMBO";
 	}
 	void draw(HDC hdc) {
 		int endW = 22;
@@ -261,8 +261,8 @@ public:
 		x = y = 10;
 		w = 115;
 		h = 25;
-		text = "Check box";
-		type = "CHECKBOX";
+		text = L"Check box";
+		type = L"CHECKBOX";
 	}
 	void draw(HDC hdc) {
 		DrawUtil::drawWhiteBox(hdc, x, y, 14, 14);
@@ -281,8 +281,8 @@ public:
 		x = y = 10;
 		w = 115;
 		h = 25;
-		text = "Radio button";
-		type = "RADIO";
+		text = L"Radio button";
+		type = L"RADIO";
 	}
 	void draw(HDC hdc) {
 		::Ellipse(hdc, x, y, x + 14, y + 14);

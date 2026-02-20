@@ -5,13 +5,14 @@
 
 class CMyPage : public CPropertyPage {
 public:
-	string name;
+	wstring name;
+
 	CMyPage(const wchar_t* title) : CPropertyPage(title, IDD_PERSON) {
 	}
 	void onInitDialog() {
 		CEdit m_edt;
 		bind(m_edt, ID_TXT_NAME);
-		m_edt.setText("Bibhas");
+		m_edt.setText(L"Bibhas");
 	}
 	bool onApply() {
 		CEdit m_edt;
@@ -33,28 +34,27 @@ CMyDialog(CWindow *p) : CDialog(TEST_DIALOG, p) {
 }
 
 void onOK() {
-	std::cout << "OnOK" << std::endl;
 	/*
 	CMyDialog mdlg(this);
 
 	mdlg.doModal();
 	*/
-	CPropertySheet ps("Title", this);
-	CMyPage p1("Person");
-	CMyPage p2("Hello");
+	CPropertySheet ps(L"Title", this);
+	CMyPage p1(L"Person");
+	CMyPage p2(L"Hello");
 
 	ps.addPage(p1);
 	ps.addPage(p2);
 
 	if (ps.doModal()) {
-		m_edt.setText(p1.name + " " + p2.name);
+		m_edt.setText(p1.name + L" " + p2.name);
 	}
 }
 
 void onInitDialog() {
 	bind(m_edt, ID_EDT1);
 
-	m_edt.setText("Hello");
+	m_edt.setText(L"Hello");
 }
 
 };

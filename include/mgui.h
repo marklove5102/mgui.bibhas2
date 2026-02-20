@@ -190,7 +190,7 @@ void create(int x, int y, int w, int h, CWindow* parent, HMENU id, bool editable
 void addItem(const wchar_t* txt) {
 	SendMessage(m_wnd, CB_ADDSTRING, 0, (LPARAM) txt);
 }
-void addItem(wstring& txt) {
+void addItem(const wstring& txt) {
 	addItem(txt.c_str());
 }
 void deleteItem(int idx) {
