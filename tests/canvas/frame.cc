@@ -327,7 +327,7 @@ public:
 		erase(getSelected());
 	}
 
-	void openFile(const std::wstring& fileName) {
+	void openFile(const std::wwstring& fileName) {
 		std::filesystem::path path(fileName);
 		std::ifstream is(path);
 
@@ -410,7 +410,7 @@ public:
 		return pC;
 	}
 
-	void saveFile(const std::wstring& fileName) {
+	void saveFile(const std::wwstring& fileName) {
 		std::filesystem::path path(fileName);
 		std::ofstream os(path);
 
@@ -694,7 +694,7 @@ public:
 		text.getText(control->text);
 		//Get type ID
 		control->type =
-			(const char*) types.getItemData(types.getSel());
+			(const wchar_t*) types.getItemData(types.getSel());
 		CDialog::onOK();
 	}
 };
@@ -808,7 +808,7 @@ try {
 	} else if (id == _PASTE) {
 		cv.paste();
 	}
-} catch (const char* msg) {
+} catch (const wchar_t* msg) {
 	errorBox(msg);
 }
 }
@@ -832,7 +832,7 @@ try {
 	wnd.create();
 	wnd.show();
 	CWindow::loop();
-} catch (const char* mesg) {
+} catch (const wchar_t* mesg) {
 	cout << "GetLastError():" << ::GetLastError() << endl;
 	Msg(mesg);
 }

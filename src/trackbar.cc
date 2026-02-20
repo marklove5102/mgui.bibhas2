@@ -2,7 +2,7 @@
 
 void
 CTrackBar::create(int x, int y, int w, int h, CWindow* parent, HMENU id) {
-	CWindow::create(0, TRACKBAR_CLASS, "",
+	CWindow::create(0, TRACKBAR_CLASS, L"",
 		WS_CHILD |
 		WS_VISIBLE |
 		TBS_AUTOTICKS,

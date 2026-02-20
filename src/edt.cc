@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <sstream>
 #include "../include/mgui.h"
 
 void
@@ -11,7 +11,7 @@ CEdit::create(int x, int y, int w, int h,
 		style = style | WS_VSCROLL | 
                     ES_WANTRETURN | ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL;
         }
-	CWindow::create(WS_EX_CLIENTEDGE, "EDIT", "",
+	CWindow::create(WS_EX_CLIENTEDGE, L"EDIT", L"",
 		style,
 		x, y,
 		w, h,
@@ -20,32 +20,52 @@ CEdit::create(int x, int y, int w, int h,
 	setFont((HFONT) GetStockObject(DEFAULT_GUI_FONT));
 }
 
-bool CEdit::getDouble(double& d) {
-	std::string str;
+bool CEdit::getDouble(double& value) {
+	std::wstring str;
+	size_t count = 0;
 
 	getText(str);
 
-	return ::sscanf(str.c_str(), "%lf", &d) == 1;
+	double result = std::stod(str, &count);
+
+	if (count == 0) {
+		return false;
+	}
+
+	value = result;
+
+	return true;
 }
 
-bool CEdit::getInt(int& d) {
-	std::string str;
+bool CEdit::getInt(int& value) {
+	std::wstring str;
+	size_t count = 0;
 
 	getText(str);
 
-	return ::sscanf(str.c_str(), "%d", &d) == 1;
+	int result = std::stoi(str, &count);
+
+	if (count == 0) {
+		return false;
+	}
+
+	value = result;
+
+	return true;
 }
 
 void CEdit::setDouble(double d) {
-	char buff[128];
+	std::wstringstream ws;
 
-	::snprintf(buff, sizeof(buff), "%g", d);
-	setText(buff);
+	ws << d;
+
+	setText(ws.str());
 }
 
 void CEdit::setInt(int d) {
-	char buff[128];
+	std::wstringstream ws;
 
-	::snprintf(buff, sizeof(buff), "%d", d);
-	setText(buff);
+	ws << d;
+
+	setText(ws.str());
 }

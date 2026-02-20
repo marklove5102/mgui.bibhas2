@@ -9,7 +9,7 @@ CTreeView::create(int x, int y, int w, int h,
 	DWORD style = WS_CHILD | WS_VISIBLE |  WS_BORDER | TVS_HASLINES | 
 		TVS_LINESATROOT | TVS_HASBUTTONS;
 
-	CWindow::create(WS_EX_CLIENTEDGE, WC_TREEVIEW, "", 
+	CWindow::create(WS_EX_CLIENTEDGE, WC_TREEVIEW, L"", 
 		style,
 		x, y,
 		w, h,
@@ -18,14 +18,14 @@ CTreeView::create(int x, int y, int w, int h,
 }
 
 
-HTREEITEM CTreeView::addItem(HTREEITEM parent, const char* text, void* data) {
+HTREEITEM CTreeView::addItem(HTREEITEM parent, const wchar_t* text, void* data) {
 	TVITEM tvi; 
 	TVINSERTSTRUCT tvins; 
 
 	tvi.mask = TVIF_TEXT | TVIF_PARAM;
 
-	tvi.pszText = (CHAR*) text; 
-	tvi.cchTextMax = (int) strlen(text);
+	tvi.pszText = (wchar_t*) text;
+	tvi.cchTextMax = (int) wcslen(text);
 	tvi.lParam = (LPARAM) data;
 	
 	tvins.item = tvi; 

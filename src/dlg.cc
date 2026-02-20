@@ -1,6 +1,6 @@
 #include "../include/mgui.h"
 
-CDialog::CDialog(const char* id, CWindow* parent) {
+CDialog::CDialog(const wchar_t* id, CWindow* parent) {
 	m_wnd = NULL;
 	resId = id;
 	parentW = parent;

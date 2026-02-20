@@ -6,7 +6,7 @@
 class CMyPage : public CPropertyPage {
 public:
 	string name;
-	CMyPage(const char* title) : CPropertyPage(title, IDD_PERSON) {
+	CMyPage(const wchar_t* title) : CPropertyPage(title, IDD_PERSON) {
 	}
 	void onInitDialog() {
 		CEdit m_edt;
@@ -70,7 +70,7 @@ try {
 
 	mdlg.doModal();
 
-} catch (const char* mesg) {
+} catch (const wchar_t* mesg) {
 	cout << "Exception: " << mesg << " GetLastError():" << ::GetLastError() << endl;
 }
 	return 0;

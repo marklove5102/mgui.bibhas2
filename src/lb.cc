@@ -6,7 +6,7 @@ CListBox::create(int x, int y, int w, int h,
 
 	DWORD style = WS_CHILD | WS_VISIBLE | WS_VSCROLL | LBS_NOTIFY | LBS_HASSTRINGS;
 
-	CWindow::create(0, "LISTBOX", "", 
+	CWindow::create(0, L"LISTBOX", L"", 
 		style,
 		x, y,
 		w, h,

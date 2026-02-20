@@ -1,10 +1,10 @@
 #include "../include/mgui.h"
 
 void
-CButton::create(const char* label, int x, int y, int w, int h, 
+CButton::create(const wchar_t* label, int x, int y, int w, int h, 
 	CWindow* parent, HMENU id) {
 	DWORD style = WS_VISIBLE | WS_TABSTOP | WS_CHILD | BS_PUSHBUTTON;
-	CWindow::create(0, "BUTTON", label, 
+	CWindow::create(0, L"BUTTON", label, 
 		style,
 		x, y,
 		w, h,
@@ -14,10 +14,10 @@ CButton::create(const char* label, int x, int y, int w, int h,
 }
 
 void
-CCheckBox::create(const char* label, int x, int y, int w, int h, 
+CCheckBox::create(const wchar_t* label, int x, int y, int w, int h, 
 	CWindow* parent, HMENU id) {
 	DWORD style = WS_VISIBLE | WS_TABSTOP | WS_CHILD | BS_CHECKBOX;
-	CWindow::create(0, "BUTTON", label, 
+	CWindow::create(0, L"BUTTON", label, 
 		style,
 		x, y,
 		w, h,
@@ -38,10 +38,10 @@ void CCheckBox::setCheck(bool bCheck){
 }
 
 void
-CGroupBox::create(const char* label, int x, int y, int w, int h,
+CGroupBox::create(const wchar_t* label, int x, int y, int w, int h,
 	CWindow* parent) {
 	DWORD style = WS_VISIBLE | WS_TABSTOP | WS_CHILD | BS_GROUPBOX;
-	CWindow::create(0, "BUTTON", label, 
+	CWindow::create(0, L"BUTTON", label,
 		style,
 		x, y,
 		w, h,
