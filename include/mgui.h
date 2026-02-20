@@ -7,10 +7,10 @@
 using namespace std;
 
 extern HINSTANCE g_instance;
-#define Msg(msg) MessageBox (NULL, msg, "Message", MB_OK)
+#define Msg(msg) MessageBox (NULL, msg, L"Message", MB_OK)
 #define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
-extern void trace(const char* msg);
+extern void trace(const wchar_t* msg);
 
 class CWindow {
 	static HACCEL accelerators;
@@ -21,7 +21,7 @@ HWND m_wnd;
 
 CWindow();
 ~CWindow();
-void create(DWORD exStyle, const char* wndClass, const char* title, DWORD style,
+void create(DWORD exStyle, const wchar_t* wndClass, const wchar_t* title, DWORD style,
 int x, int y, int width, int height, HWND parent, HMENU idOrMenu);
 void show(bool bShow = true);
 HWND getWindow();
@@ -44,29 +44,29 @@ static void stop();
 bool openFileName(const wchar_t* title, const std::vector<COMDLG_FILTERSPEC>& filter, std::wstring& file_name);
 bool saveFileName(const wchar_t* title, const std::vector<COMDLG_FILTERSPEC>& filter, std::wstring& file_name);
 
-void messageBox(const char* msg) {
-	::MessageBox(m_wnd, msg, "Message", MB_OK);
+void messageBox(const wchar_t* msg) {
+	::MessageBox(m_wnd, msg, L"Message", MB_OK);
 }
 
-void errorBox(const char* msg) {
-	::MessageBox(m_wnd, msg, "Error", MB_OK | MB_ICONERROR);
+void errorBox(const wchar_t* msg) {
+	::MessageBox(m_wnd, msg, L"Error", MB_OK | MB_ICONERROR);
 }
 
-bool questionBox(const char* msg) {
-	return ::MessageBox(m_wnd, msg, "Question", MB_YESNO | MB_ICONQUESTION)
+bool questionBox(const wchar_t* msg) {
+	return ::MessageBox(m_wnd, msg, L"Question", MB_YESNO | MB_ICONQUESTION)
 		== IDYES;
 }
 
-bool confirmBox(const char* msg) {
-	return ::MessageBox(m_wnd, msg, "Confirm", MB_OKCANCEL | MB_OKCANCEL)
+bool confirmBox(const wchar_t* msg) {
+	return ::MessageBox(m_wnd, msg, L"Confirm", MB_OKCANCEL | MB_OKCANCEL)
 		== IDOK;
 }
 
-void setText(const char* txt) {
+void setText(const wchar_t* txt) {
 	::SendMessage(m_wnd, WM_SETTEXT, 0, (LPARAM) txt);
 }
 
-void setText(const string& txt) {
+void setText(const wstring& txt) {
 	setText(txt.c_str());
 }
 
@@ -76,7 +76,7 @@ int64_t getTextLength() {
 
 void acceptFiles(bool val = true);
 
-void getText(string& str) {
+void getText(wstring& str) {
 	int64_t len = getTextLength();
 
 	str.resize(len);
@@ -109,27 +109,27 @@ class CFrame : public CWindow {
 HCURSOR hOldCursor;
 
 public:
-void create(const char* title, int width, int height);
-void create(const char* title, int width, int height, const char* menuId);
-void create(const char* title, int width, int height, int menuId);
-void create(const char* title, int width, int height, const char* menuId, const char* iconId);
-void create(const char* title, int width, int height, int menuId, int iconId);
+void create(const wchar_t* title, int width, int height);
+void create(const wchar_t* title, int width, int height, const wchar_t* menuId);
+void create(const wchar_t* title, int width, int height, int menuId);
+void create(const wchar_t* title, int width, int height, const wchar_t* menuId, const wchar_t* iconId);
+void create(const wchar_t* title, int width, int height, int menuId, int iconId);
 
 CFrame();
 virtual ~CFrame();
-virtual void onDropFiles(std::string *list, int count);
+virtual void onDropFiles(std::wstring *list, int count);
 virtual bool handleEvent(UINT message, WPARAM wParam, LPARAM lParam);
 void showWaitCursor(bool bShow);
 };
 
 class CButton : public CWindow {
 public:
-void create(const char* label, int x, int y, int w, int h, CWindow* parent,
+void create(const wchar_t* label, int x, int y, int w, int h, CWindow* parent,
 	HMENU id);
 };
 class CCheckBox : public CWindow {
 public:
-void create(const char* label, int x, int y, int w, int h, CWindow* parent,
+void create(const wchar_t* label, int x, int y, int w, int h, CWindow* parent,
 	HMENU id);
 bool getCheck();
 void setCheck(bool bCheck);
@@ -148,13 +148,13 @@ public:
 class CEdit : public CWindow {
 public:
 void create(int x, int y, int w, int h, CWindow* parent, bool bmulti=false);
-void appendText(const char* txt) {
+void appendText(const wchar_t* txt) {
 	int64_t iPrevLen = getTextLength();
 
 	::SendMessage(m_wnd, EM_SETSEL, iPrevLen, iPrevLen);
 	::SendMessage(m_wnd, EM_REPLACESEL, 0, (LPARAM) txt);
 }
-void appendText(string& txt) {
+void appendText(wstring& txt) {
 	appendText(txt.c_str());
 }
 
@@ -175,8 +175,8 @@ void setInt(int i);
 class CRichEdit : public CWindow {
 public:
 void create(int x, int y, int w, int h, CWindow* parent);
-void appendText(const char* txt);
-void appendText(string& txt) {
+void appendText(const wchar_t* txt);
+void appendText(wstring& txt) {
 	appendText(txt.c_str());
 }
 void setSel(int start, int end);
@@ -187,10 +187,10 @@ void getSel(int& start, int& end);
 class CComboBox : public CWindow {
 public:
 void create(int x, int y, int w, int h, CWindow* parent, HMENU id, bool editable);
-void addItem(const char* txt) {
+void addItem(const wchar_t* txt) {
 	SendMessage(m_wnd, CB_ADDSTRING, 0, (LPARAM) txt);
 }
-void addItem(string& txt) {
+void addItem(const wstring& txt) {
 	addItem(txt.c_str());
 }
 void deleteItem(int idx) {
@@ -214,7 +214,7 @@ void setSel(int idx) {
 int64_t clear() {
 	return SendMessage(m_wnd, CB_RESETCONTENT, 0, (LPARAM) 0);
 }
-void getItemText(int idx, string& str) {
+void getItemText(int idx, wstring& str) {
 	int64_t len = ::SendMessage(m_wnd, CB_GETLBTEXTLEN, (WPARAM) idx, 0);
 
 	str.resize(len);
@@ -226,10 +226,10 @@ class CListBox : public CWindow {
 public:
 void create(int x, int y, int w, int h, CWindow* parent,
 	HMENU id);
-void addItem(const char* txt) {
+void addItem(const wchar_t* txt) {
 	SendMessage(m_wnd, LB_ADDSTRING, 0, (LPARAM) txt);
 }
-void addItem(string& txt) {
+void addItem(wstring& txt) {
 	addItem(txt.c_str());
 }
 void setItemData(int idx, void* data) {
@@ -250,7 +250,7 @@ int64_t clear() {
 int64_t getSel() {
 	return SendMessage(m_wnd, LB_GETCURSEL, 0, (LPARAM) 0);
 }
-void getItemText(int idx, string& str) {
+void getItemText(int idx, wstring& str) {
 	int64_t len = ::SendMessage(m_wnd, LB_GETTEXTLEN, (WPARAM) idx, 0);
 	str.resize(len);
 	::SendMessage(m_wnd, LB_GETTEXT, (WPARAM) idx, (LPARAM) str.data());
@@ -260,11 +260,11 @@ void getItemText(int idx, string& str) {
 class CListView : public CWindow {
 public:
 void create(int x, int y, int w, int h, CWindow* parent, HMENU id);
-void addColumn(int i, const char* label, int width);
+void addColumn(int i, const wchar_t* label, int width);
 int getItemCount();
-int addRow(const char* txt="");
-void setText(int row, int col, const char* txt);
-void setText(int row, int col, const std::string& txt);
+int addRow(const wchar_t* txt=L"");
+void setText(int row, int col, const wchar_t* txt);
+void setText(int row, int col, const std::wstring& txt);
 void setInt(int row, int col, int i);
 void clear();
 void deleteItem(int i);
@@ -278,14 +278,14 @@ void setShowGrid(bool bTrue = true);
 };
 
 class CGroupBox : public CWindow {
-void create(const char* label, int x, int y, int w, int h, CWindow* parent);
+void create(const wchar_t* label, int x, int y, int w, int h, CWindow* parent);
 };
 
 class CDialog : public CWindow {
 CWindow *parentW;
-const char* resId;
+const wchar_t* resId;
 public:
-CDialog(const char* id, CWindow* parent);
+CDialog(const wchar_t* id, CWindow* parent);
 CDialog(int id, CWindow* parent);
 void bind(CWindow& child, int id);
 bool doModal();
@@ -298,7 +298,7 @@ void onCommand(int id, int type, CWindow* source);
 
 class CLabel : public CWindow {
 public:
-void create(const char* label, int x, int y, int w, int h, CWindow* parent);
+void create(const wchar_t* label, int x, int y, int w, int h, CWindow* parent);
 };
 
 class CDateTimePicker : public CWindow {
@@ -313,7 +313,7 @@ public:
 
 
 class CPropertyPage : public CWindow {
-	string title;
+	wstring title;
 	int id;
 
 public:
@@ -324,9 +324,9 @@ public:
 	virtual bool onApply();
 	void onCommand(int id, int type, CWindow* source);
 	void bind(CWindow& child, int id);
-	CPropertyPage(const char* title, int id);
+	CPropertyPage(const wchar_t* title, int id);
 
-	const char* getTitle() {
+	const wchar_t* getTitle() {
 		return title.c_str();
 	}
 
@@ -338,15 +338,15 @@ public:
 
 class CPropertySheet : public CWindow {
 	CWindow *parentW;
-	const char* resId;
+	const wchar_t* resId;
 	PROPSHEETPAGE psp [20];
 	PROPSHEETHEADER psh;
 	int pageCount;
-	string mainTitle;
+	wstring mainTitle;
 
 public:
 
-	CPropertySheet(const char* title, CWindow* parent);
+	CPropertySheet(const wchar_t* title, CWindow* parent);
 	void addPage(CPropertyPage& p);
 	bool doModal();
 	~CPropertySheet();
@@ -357,7 +357,7 @@ public:
 
 	void create(int x, int y, int w, int h, CWindow* parent, HMENU id);
 	void clear();
-	HTREEITEM addItem(HTREEITEM parent, const char* text, void *data);
+	HTREEITEM addItem(HTREEITEM parent, const wchar_t* text, void *data);
 	void deleteItem(HTREEITEM i);
 	void setItemData(HTREEITEM i, void* data);
 	void* getItemData(HTREEITEM i);

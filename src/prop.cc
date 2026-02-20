@@ -2,7 +2,7 @@
 #include <winuser.h>
 #include <iostream>
 
-CPropertyPage::CPropertyPage(const char* title, int id) {
+CPropertyPage::CPropertyPage(const wchar_t* title, int id) {
 	this->title = title;
 	this->id = id;
 }
@@ -97,11 +97,10 @@ static INT_PTR APIENTRY DataInput(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 		break;
 	}
 
-	cout << "Returning: " << (ret == TRUE ? "TRUE" : "FALSE") << endl;
 	return ret;
 } 
 
-CPropertySheet::CPropertySheet(const char* title, CWindow* parent) {
+CPropertySheet::CPropertySheet(const wchar_t* title, CWindow* parent) {
 
 	parentW = parent;
 	mainTitle = title;
@@ -111,7 +110,7 @@ CPropertySheet::CPropertySheet(const char* title, CWindow* parent) {
 	psh.hwndParent = parent->m_wnd;
 	psh.hInstance = g_instance;
 	psh.pszIcon = NULL;
-	psh.pszCaption = (LPSTR) mainTitle.c_str();
+	psh.pszCaption = (wchar_t*) mainTitle.c_str();
 	psh.nPages = 0;
 	psh.ppsp = (LPCPROPSHEETPAGE) &psp;
 	pageCount = 0;

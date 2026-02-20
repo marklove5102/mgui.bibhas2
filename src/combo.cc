@@ -8,7 +8,7 @@ CComboBox::create(int x, int y, int w, int h, CWindow* parent, HMENU id, bool ed
 	} else {
 		style |= CBS_DROPDOWNLIST;
 	}
-	CWindow::create(0, "COMBOBOX", "", 
+	CWindow::create(0, L"COMBOBOX", L"",
 		style,
 		x, y,
 		w, h,

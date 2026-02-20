@@ -8,12 +8,12 @@
 #include <Richedit.h>
 
 void CRichEdit::create(int x, int y, int w, int h, CWindow* parent) {
-	LoadLibrary(TEXT("Riched32.dll"));
-	CWindow::create(WS_EX_CLIENTEDGE, RICHEDIT_CLASS,"", WS_CHILD|WS_VISIBLE|ES_MULTILINE|ES_AUTOVSCROLL|WS_VSCROLL, x, y, w, h, parent->m_wnd, (HMENU) NULL);
+	LoadLibrary(L"Riched32.dll");
+	CWindow::create(WS_EX_CLIENTEDGE, RICHEDIT_CLASS, L"", WS_CHILD|WS_VISIBLE|ES_MULTILINE|ES_AUTOVSCROLL|WS_VSCROLL, x, y, w, h, parent->m_wnd, (HMENU) NULL);
 	setFont((HFONT) GetStockObject(DEFAULT_GUI_FONT));
 }
 
-void CRichEdit::appendText(const char* txt) {
+void CRichEdit::appendText(const wchar_t* txt) {
 	CHARRANGE rng;
 	rng.cpMin = -1;
 	rng.cpMax = -1;

@@ -3,7 +3,7 @@
 
 void CCanvas::create(int x, int y, int width, int height, CWindow *parent) {
 	DWORD style = WS_VISIBLE | WS_CHILD;
-	CWindow::create(0, "MGUIWindow", "", 
+	CWindow::create(0, L"MGUIWindow", L"",
 		style, 
 		x, y, width, height, parent->m_wnd, NULL);
 }

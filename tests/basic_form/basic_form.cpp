@@ -1,6 +1,4 @@
-// basic_form.cpp : Defines the entry point for the application.
-//
-
+//This pragma enables newer look and feel
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
 processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -20,32 +18,32 @@ public:
         int gap = 4;
         int y = 0;
 
-        CFrame::create("A Simple Form", 340, 250);
+        CFrame::create(L"A Simple Form", 340, 250);
 
-        l1.create("Full name:", 10, y, 300, label_h, this); y += label_h + gap;
+        l1.create(L"Full name:", 10, y, 300, label_h, this); y += label_h + gap;
         name.create(10, y, 300, text_h, this); y += text_h + gap + gap;
 
-        l2.create("E-mail:", 10, y, 300, label_h, this); y += label_h + gap;
+        l2.create(L"E-mail:", 10, y, 300, label_h, this); y += label_h + gap;
         email.create(10, y, 300, text_h, this);
         y += text_h + gap + gap;
 
-        l3.create("Topics of interest:", 10, y, 300, label_h, this); 
+        l3.create(L"Topics of interest:", 10, y, 300, label_h, this); 
         y += label_h + gap;
         interests.create(10, y, 300, text_h, this, 0, false);
-        interests.addItem("Soccer");
-        interests.addItem("Photography");
-        interests.addItem("Music");
+        interests.addItem(L"Soccer");
+        interests.addItem(L"Photography");
+        interests.addItem(L"Music");
 
         y += text_h + gap + gap;
 
-        accept_terms.create("Accept terms and conditions", 10, y, 300, label_h, this, (HMENU) 2001);
+        accept_terms.create(L"Accept terms and conditions", 10, y, 300, label_h, this, (HMENU) 2001);
 
         accept_terms.setCheck(true);
 
         y += label_h + gap + gap;
 
-        ok.create("Submit", 10, y, 60, text_h, this, (HMENU) 2002);
-        clear.create("Reset", 80, y, 60, text_h, this, (HMENU)2003);
+        ok.create(L"Submit", 10, y, 60, text_h, this, (HMENU) 2002);
+        clear.create(L"Reset", 80, y, 60, text_h, this, (HMENU)2003);
     }
     void onClose() {
         CWindow::stop();
@@ -55,8 +53,8 @@ public:
             accept_terms.setCheck(!accept_terms.getCheck());
         }
         else if (id == 2002) {
-            std::ostringstream oss;
-            std::string name_txt, email_txt;
+            std::wstringstream oss;
+            std::wstring name_txt, email_txt;
 
             name.getText(name_txt);
             email.getText(email_txt);
@@ -66,18 +64,18 @@ public:
             oss << "Terms accepted: " << (accept_terms.getCheck() ? "Yes" : "No") << "\n";
 
             if (interests.getSel() >= 0) {
-                std::string txt;
+                std::wstring txt;
 
                 interests.getItemText(interests.getSel(), txt);
 
-                oss << "Interests: " << txt << "\n";
+                oss << L"Interests: " << txt << "\n";
             }
 
             messageBox(oss.str().c_str());
         }
         else if (id == 2003) {
-            name.setText("");
-            email.setText("");
+            name.setText(L"");
+            email.setText(L"");
             interests.setSel(-1);
         }
     }

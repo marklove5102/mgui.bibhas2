@@ -12,7 +12,7 @@
 
 HINSTANCE g_instance;
 
-void trace(const char* msg) {
+void trace(const wchar_t* msg) {
 	/*
 	 static FILE *pf = NULL;
 
@@ -45,7 +45,7 @@ CWindow::~CWindow() {
 void CWindow::detach() {
 	//cout << "CWindow::detach this: " << this << " HWND: " << m_wnd << endl;
 	if (m_wnd != NULL) {
-::		RemoveProp(m_wnd, "cwnd");
+::		RemoveProp(m_wnd, L"cwnd");
 		m_wnd = NULL;
 	}
 }
@@ -54,18 +54,12 @@ void CWindow::attach(HWND w) {
 	detach();
 	//cout << "CWindow::attach this: " << this << " HWND: " << w << endl;
 	m_wnd = w;
-::	SetProp(m_wnd, "cwnd", this);
+::	SetProp(m_wnd, L"cwnd", this);
 }
 
-void CWindow::create(DWORD exStyle, const char* wndClass, const char* title,
+void CWindow::create(DWORD exStyle, const wchar_t* wndClass, const wchar_t* title,
 		DWORD style, int x, int y, int width, int height, HWND parent,
 		HMENU idOrMenu) {
-	if (false) {
-		cout << "CreateWindowEx: class: " << wndClass;
-		cout << " parent: " << parent;
-		cout << " this: " << this;
-		cout << endl;
-	}
 
 	HWND w =:: CreateWindowEx(exStyle,
 			wndClass,
@@ -75,8 +69,10 @@ void CWindow::create(DWORD exStyle, const char* wndClass, const char* title,
 			parent, (HMENU) idOrMenu,
 			g_instance,
 			NULL);
+	
 	if (!w)
-	throw "CreateWindowEx failed";
+		throw "CreateWindowEx failed";
+
 	attach(w);
 }
 
@@ -89,7 +85,7 @@ HWND CWindow::getWindow() {
 }
 
 CWindow* CWindow::fromWindowSafe(HWND wnd) {
-	CWindow *pw = (CWindow*):: GetProp(wnd, "cwnd");
+	CWindow *pw = (CWindow*):: GetProp(wnd, L"cwnd");
 
 	if (pw == NULL) {
 		throw "CWindow::fromWindow. No CWindow is associated.";
@@ -99,7 +95,7 @@ CWindow* CWindow::fromWindowSafe(HWND wnd) {
 }
 
 CWindow* CWindow::fromWindow(HWND wnd) {
-	CWindow *pw = (CWindow*):: GetProp(wnd, "cwnd");
+	CWindow *pw = (CWindow*):: GetProp(wnd, L"cwnd");
 
 	return pw;
 }
@@ -110,7 +106,7 @@ void CALLBACK timerProc(
 
 	w = CWindow::fromWindow(hWnd);
 	if (w == NULL) {
-		trace("Can not determine window from timer.");
+		return;
 	}
 	w->onTimer((int) id);
 }
@@ -230,7 +226,7 @@ void CWindow::init(HINSTANCE hInstance, int acceleratorId) {
 	wndclass.lpszMenuName = NULL;
 
 	wndclass.hbrBackground = (HBRUSH)(COLOR_WINDOW);
-	wndclass.lpszClassName = "MGUIWindow";
+	wndclass.lpszClassName = L"MGUIWindow";
 	wndclass.style = styleNormal;
 
 	if ( !RegisterClass(&wndclass) )
@@ -316,15 +312,15 @@ bool CWindow::saveFileName(const wchar_t* title, const std::vector<COMDLG_FILTER
 	return select_file(m_wnd, false, title, filter, file_name);
 }
 
-void CFrame::create(const char* title, int width, int height) {
-	CFrame::create(title, width, height, (const char*) NULL);
+void CFrame::create(const wchar_t* title, int width, int height) {
+	CFrame::create(title, width, height, (const wchar_t*) NULL);
 }
 
-void CFrame::create(const char* title, int width, int height, int menuId) {
+void CFrame::create(const wchar_t* title, int width, int height, int menuId) {
 	CFrame::create(title, width, height, MAKEINTRESOURCE(menuId));
 }
 
-void CFrame::create(const char* title, int width, int height, const char* menuId) {
+void CFrame::create(const wchar_t* title, int width, int height, const wchar_t* menuId) {
 	HMENU hm = NULL;
 
 	if (menuId != NULL) {
@@ -334,13 +330,13 @@ void CFrame::create(const char* title, int width, int height, const char* menuId
 		}
 	}
 
-	CWindow::create(0, "MGUIWindow", title,
+	CWindow::create(0, L"MGUIWindow", title,
 		WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU,
 		CW_USEDEFAULT, CW_USEDEFAULT, width, height, NULL, hm);
 
 }
 
-void CFrame::create(const char* title, int width, int height, int menuId, int iconId) {
+void CFrame::create(const wchar_t* title, int width, int height, int menuId, int iconId) {
 
 	CFrame::create(title, width, height, menuId);
 
@@ -349,8 +345,8 @@ void CFrame::create(const char* title, int width, int height, int menuId, int ic
 	::SendMessage(m_wnd, WM_SETICON, ICON_SMALL, LPARAM(icon));
 }
 
-void CFrame::create(const char* title, int width, int height,
-		const char* menuId, const char* iconId) {
+void CFrame::create(const wchar_t* title, int width, int height,
+		const wchar_t* menuId, const wchar_t* iconId) {
 
 	CFrame::create(title, width, height, menuId);
 
@@ -391,12 +387,12 @@ bool CFrame::handleEvent(UINT message, WPARAM wParam, LPARAM lParam) {
 	std::cout << "Processing file drop" << std::endl;
 	HDROP hd = (HDROP) wParam;
 	int count =:: DragQueryFile(hd, 0xFFFFFFFF, NULL, 0);
-	std::string *list = new std::string[count];
+	std::wstring *list = new std::wstring[count];
 	for (int i = 0; i < count; ++i) {
 		int sz = ::DragQueryFile(hd, i, NULL, 0);
-		std::string& str = list[i];
+		std::wstring& str = list[i];
 		str.resize(sz);
-		::DragQueryFile(hd, i, (CHAR*) str.data(), sz + 1);
+		::DragQueryFile(hd, i, (wchar_t*) str.data(), sz + 1);
 	}
 	onDropFiles(list, count);
 	delete [] list;
@@ -405,5 +401,5 @@ bool CFrame::handleEvent(UINT message, WPARAM wParam, LPARAM lParam) {
 	return true;
 }
 
-void CFrame::onDropFiles(std::string* list, int count) {
+void CFrame::onDropFiles(std::wstring* list, int count) {
 }

@@ -2,8 +2,8 @@
 
 void CDateTimePicker::create(int x, int y, int w, int h, CWindow* p, HMENU id) {
 	CWindow::create(0,
-		"SysDateTimePick32",
-		"DateTime",
+		L"SysDateTimePick32",
+		L"DateTime",
 		WS_BORDER|WS_CHILD|WS_VISIBLE | DTS_SHOWNONE,
 		x, y, w, h,
 		p->m_wnd,

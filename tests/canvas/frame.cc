@@ -192,7 +192,7 @@ public:
 	}
 	Control* hitTest(int x, int y) {
 
-		for (int i = controlList.size() - 1; i >= 0; --i) {
+		for (size_t i = controlList.size() - 1; i >= 0; --i) {
 			Control *c = controlList[i];
 
 			if (ptInRect(x, y, 
@@ -252,9 +252,12 @@ public:
 		if (ec == NULL) {
 			return;
 		}
-		int count = controlList.size();
-		for (int i = 0; i < count; ++i) {
+
+		size_t count = controlList.size();
+
+		for (size_t i = 0; i < count; ++i) {
 			Control *c = controlList[i];
+
 			if (c == ec) {
 				controlList.erase(controlList.begin() + i);
 				if (c == getSelected()) {
@@ -280,8 +283,8 @@ public:
 		::InvalidateRect(m_wnd, &r, TRUE);
 	}
 	void clearList() {
-		int count = controlList.size();
-		for (int i = 0; i < count; ++i) {
+		size_t count = controlList.size();
+		for (size_t i = 0; i < count; ++i) {
 			Control *c = controlList[i];
 
 			delete c;
@@ -329,17 +332,17 @@ public:
 
 	void openFile(const std::wstring& fileName) {
 		std::filesystem::path path(fileName);
-		std::ifstream is(path);
+		std::wifstream is(path);
 
 		if (!is.is_open()) {
 			throw "Could not open file.";
 		}
 
-		std::string magic;
+		std::wstring magic;
 
 		is >> magic;
 
-		if (magic != "MGUI") {
+		if (magic != L"MGUI") {
 			throw "Invalid file format.";
 		}
 
@@ -385,21 +388,21 @@ public:
 	Control* cloneTemplate(Control* c) {
 		Control *pC = NULL;
 
-		if (c->type == "LABEL") {
+		if (c->type == L"LABEL") {
 			pC = new Label();
-		} else if (c->type == "BUTTON") {
+		} else if (c->type == L"BUTTON") {
 			pC = new Button();
-		} else if (c->type == "EDIT") {
+		} else if (c->type == L"EDIT") {
 			pC = new EditSingle();
-		} else if (c->type == "EDIT_MULTI") {
+		} else if (c->type == L"EDIT_MULTI") {
 			pC = new EditMulti();
-		} else if (c->type == "LISTBOX") {
+		} else if (c->type == L"LISTBOX") {
 			pC = new ListBox();
-		} else if (c->type == "COMBO") {
+		} else if (c->type == L"COMBO") {
 			pC = new ComboBox();
-		} else if (c->type == "CHECKBOX") {
+		} else if (c->type == L"CHECKBOX") {
 			pC = new CheckBox();
-		} else if (c->type == "RADIO") {
+		} else if (c->type == L"RADIO") {
 			pC = new RadioButton();
 		}
 		if (pC == NULL) {
@@ -412,7 +415,7 @@ public:
 
 	void saveFile(const std::wstring& fileName) {
 		std::filesystem::path path(fileName);
-		std::ofstream os(path);
+		std::wofstream os(path);
 
 		if (!os.is_open()) {
 			throw "Could not open file to save.";
@@ -422,27 +425,22 @@ public:
 		int nextId = getNextId();
 		int version = 1;
 
-		os << "MGUI" << std::endl;
+		os << L"MGUI" << std::endl;
 		os << version << std::endl;
 		os << count << std::endl;
 		os << nextId << std::endl;
 		os << dlgBox->x << " " << dlgBox->y << " " <<
 			dlgBox->w << " " << dlgBox->h << std::endl;
 
-		cout << xConv(dlgBox->x) <<
-			", " << yConv(dlgBox->y) <<
-			", " << xConv(dlgBox->w) <<
-			", " << yConv(dlgBox->h) << endl;
-
 		for (int i = 0; i < count; ++i) {
 			Control *c = controlList[i];
 
-			os << c->type << "\n" << c->text << "\n"
+			os << c->type << L"\n" << c->text << L"\n"
 				<< c->id <<
-				" " << xConv(c->x) <<
-				" " << yConv(c->y) <<
-				" " << xConv(c->w) <<
-				" " << yConv(c->h) << endl;
+				L" " << xConv(c->x) <<
+				L" " << yConv(c->y) <<
+				L" " << xConv(c->w) <<
+				L" " << yConv(c->h) << endl;
 
 		}
 
@@ -647,7 +645,7 @@ public:
 	CComboBox types;
 
 	CPropertyDialog(CWindow *p, Control *c) :
-		CDialog("PropertyDialog", p) {
+		CDialog(L"PropertyDialog", p) {
 		control = c;
 	}
 	void onInitDialog() {
@@ -655,20 +653,20 @@ public:
 		bind(text, ID_CONTROL_TEXT);
 		bind(types, ID_CONTROL_TYPE);
 
-		const char *typeName[] = {
-			"Label",
-			"Edit",
-			"Button",
-			"Combo box",
-			"List box",
+		const wchar_t *typeName[] = {
+			L"Label",
+			L"Edit",
+			L"Button",
+			L"Combo box",
+			L"List box",
 			NULL
 		};
-		const char *typeId[] = {
-			"LABEL",
-			"EDIT",
-			"PUSHBUTTON",
-			"COMBO",
-			"LISTBOX",
+		const wchar_t *typeId[] = {
+			L"LABEL",
+			L"EDIT",
+			L"PUSHBUTTON",
+			L"COMBO",
+			L"LISTBOX",
 			NULL
 		};
 
@@ -689,12 +687,12 @@ public:
 		string str;
 		id.getText(control->id);
 		if (control->id.length() == 0) {
-			control->id = "0";
+			control->id = L"0";
 		}
 		text.getText(control->text);
 		//Get type ID
 		control->type =
-			(const char*) types.getItemData(types.getSel());
+			(const wchar_t*) types.getItemData(types.getSel());
 		CDialog::onOK();
 	}
 };
@@ -705,7 +703,7 @@ class CMyFrame : public CFrame {
 	SelectTool selectTool;
 public:
 void create() {
-	CFrame::create("Dialog Editor", 700, 450, "MainMenu");
+	CFrame::create(L"Dialog Editor", 700, 450, L"MainMenu");
 	int i = 0;
 
 	cv.create(0, 0, 0, 0, this);
@@ -715,7 +713,7 @@ void create() {
 
 void onClose() {
 	if (cv.isDirty()) {
-		if (questionBox("The design has changed.\nWould you like to save the file?")) {
+		if (questionBox(L"The design has changed.\nWould you like to save the file?")) {
 			saveFile();
 		}
 	}
@@ -808,7 +806,7 @@ try {
 	} else if (id == _PASTE) {
 		cv.paste();
 	}
-} catch (const char* msg) {
+} catch (const wchar_t* msg) {
 	errorBox(msg);
 }
 }
@@ -832,7 +830,7 @@ try {
 	wnd.create();
 	wnd.show();
 	CWindow::loop();
-} catch (const char* mesg) {
+} catch (const wchar_t* mesg) {
 	cout << "GetLastError():" << ::GetLastError() << endl;
 	Msg(mesg);
 }

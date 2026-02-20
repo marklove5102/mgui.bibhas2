@@ -1,7 +1,7 @@
 #include "../include/mgui.h"
 #include <commctrl.h>
 #include <string.h>
-#include <stdio.h>
+#include <sstream>
 
 void
 CListView::create(int x, int y, int w, int h, 
@@ -10,7 +10,7 @@ CListView::create(int x, int y, int w, int h,
 	DWORD style = WS_CHILD | WS_VISIBLE |  LVS_REPORT | LVS_AUTOARRANGE 
 		| LVS_SINGLESEL | LVS_SHOWSELALWAYS;
 
-	CWindow::create(WS_EX_CLIENTEDGE, WC_LISTVIEW, "", 
+	CWindow::create(WS_EX_CLIENTEDGE, WC_LISTVIEW, L"", 
 		style,
 		x, y,
 		w, h,
@@ -18,14 +18,14 @@ CListView::create(int x, int y, int w, int h,
 		id);
 }
 
-void CListView::addColumn(int i, const char* label, int width) {
+void CListView::addColumn(int i, const wchar_t* label, int width) {
 	LVCOLUMN col;
 
 	col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
 
 	col.fmt = LVCFMT_LEFT;
-	col.pszText = (char*) label;
-	col.cchTextMax = (int) strlen(label);
+	col.pszText = (wchar_t*) label;
+	col.cchTextMax = (int) wcslen(label);
 	col.cx = width;
 
 	SendMessage(m_wnd, LVM_INSERTCOLUMN, i, (LPARAM)&col);
@@ -35,14 +35,14 @@ int CListView::getItemCount() {
 	return ListView_GetItemCount(m_wnd);
 }
 
-int CListView::addRow(const char* txt) {
+int CListView::addRow(const wchar_t* txt) {
 	LVITEM lvI;
 
 	lvI.mask = LVIF_TEXT;
 	lvI.iItem = getItemCount() + 1;
 	lvI.iSubItem = 0;
-	lvI.pszText = (char*) txt;
-	lvI.cchTextMax = (int) strlen(txt);
+	lvI.pszText = (wchar_t*) txt;
+	lvI.cchTextMax = (int) wcslen(txt);
 
 	return ListView_InsertItem(m_wnd, &lvI );
 }
@@ -73,11 +73,11 @@ int CListView::getColumnWidth(int col) {
 	return ListView_GetColumnWidth(m_wnd, col);
 }
 
-void CListView::setText(int row, int col, const char* txt) {
-	ListView_SetItemText( m_wnd, row, col, (char*) txt);
+void CListView::setText(int row, int col, const wchar_t* txt) {
+	ListView_SetItemText( m_wnd, row, col, (wchar_t*) txt);
 }
 
-void CListView::setText(int row, int col, const std::string& txt) {
+void CListView::setText(int row, int col, const std::wstring& txt) {
 	setText(row, col, txt.c_str());
 }
 
@@ -125,9 +125,9 @@ void CListView::setShowGrid(bool bTrue) {
 }
 
 void CListView::setInt(int row, int col, int i) {
-	char buff[256];
+	std::wstringstream ws;
 
-	snprintf(buff, sizeof(buff), "%d", i);
+	ws << i;
 
-	setText(row, col, buff);
+	setText(row, col, ws.str());
 }
