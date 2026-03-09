@@ -1,5 +1,5 @@
 ## Overview
-MGUI is a C++ library that wraps over low level Win 32 GUI API. The library is minimal and not cross platform. It's purpose is to provide a way to quickly
+MGUI is a C++ library that wraps over the low level Win 32 GUI API. The library is minimal and not cross platform. It's purpose is to provide a way to quickly
 create Windows GUI apps using the Visual Studio Community edition.
 
 If you need cross platform support, there are better options like
@@ -22,7 +22,7 @@ Link your application code with the following libraries:
 
 ## Minimal Code Example
 
-```c
+```cpp
 class MainWindow : public CFrame {
 public:
     void create() {
